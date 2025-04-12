@@ -30,9 +30,8 @@
 
   const handleDeleteJob = async () => {
     try {
-      await axios.delete(`/api/jobs/${jobId}`);
+      await store.deleteJob(jobId);
       toast.success('Job deleted');
-
       router.push('/jobs');
     } catch (error) {
       console.log(error);

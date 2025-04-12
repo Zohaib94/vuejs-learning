@@ -29,20 +29,17 @@ export const useJobsStore = defineStore('jobs', {
     async addJob(jobItem: Omit<Job, 'id'>) {
       try {
         const newItem = await axios.post('/api/jobs', jobItem);
-        this.todoList.unshift(newItem.data);
+        this.jobs.unshift(newItem.data);
       } catch (error) {
-        alert(error);
-        console.log(error);
+        throw error;
       }
     },
     async deleteJob(jobID: number) {
-      this.jobs = this.todoList.filter((todoItem) => todoItem.id !== jobID);
-
       try {
+        this.jobs = this.jobs.filter((job) => job.id !== jobID);
         await axios.delete(`/api/jobs/${jobID}`);
       } catch (error) {
-        alert(error);
-        console.log(error);
+        throw error;
       }
     },
     async fetchJobs() {
@@ -51,8 +48,7 @@ export const useJobsStore = defineStore('jobs', {
         this.jobs = response.data;
       }
       catch (error) {
-        alert(error)
-        console.log(error)
+        throw error;
       }
     },
     async fetchJob(jobID: number) {
@@ -63,13 +59,13 @@ export const useJobsStore = defineStore('jobs', {
         this.currentJob = response.data;
       }
       catch (error) {
-        alert(error)
-        console.log(error)
+        throw error;
       }
     },
-    async updateJob(jobId: number, updatedJob: Omit<Job, "id">) {
+    async updateJob() {
       try {
-        const response = await axios.put(`/api/jobs/${jobId}`, updatedJob);
+        const { id, ...updatedJob } = this.currentJob;
+        const response = await axios.put(`/api/jobs/${id}`, updatedJob);
 
         this.jobs = this.jobs.map((job) => {
           if (job.id === response.data.id) {
@@ -79,8 +75,7 @@ export const useJobsStore = defineStore('jobs', {
           return job;
         });
       } catch (error) {
-        alert(error);
-        console.log(error);
+        throw error;
       }
     },
   }
